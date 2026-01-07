@@ -1,0 +1,66 @@
+# AI4PKM Orchestrator Configuration
+# Centralized input/output routing for all agents
+version: "1.0"
+
+# Orchestrator runtime settings
+orchestrator:
+  prompts_dir: "_Settings_/Prompts"
+  tasks_dir: "_Settings_/Tasks"
+  logs_dir: "_Settings_/Logs"
+  skills_dir: "_Settings_/Skills"
+  bases_dir: "_Settings_/Bases"
+  max_concurrent: 3
+  poll_interval: 1.0
+
+# Global defaults for all agents
+defaults:
+  executor: gemini_cli
+  timeout_minutes: 30
+  max_parallel: 3
+  task_create: true
+  task_priority: medium
+  task_archived: false
+
+nodes:
+  # Enrich Ingested Content
+  - type: agent
+    name: Enrich Ingested Content (EIC)
+    input_path: Ingest/Clippings
+    output_path: AI/Articles
+    output_type: new_file
+    executor: codex_cli  # File modification tasks use Codex
+
+# Pollers configuration
+pollers:
+  apple_photos:
+    enabled: false
+    target_dir: "Ingest/Photolog"
+    poll_interval: 3600
+    days: 7
+    
+  apple_notes:
+    enabled: false
+    target_dir: "Ingest/Apple Notes"
+    poll_interval: 1800
+    
+  gobi:
+    enabled: false
+    target_dir: "Ingest/Gobi"
+    poll_interval: 3600
+    api_base_url: "https://api.joingobi.com/api"
+    
+  gobi_by_tags:
+    enabled: false
+    target_dir: "Ingest/GobiByTags"
+    poll_interval: 3600
+    api_base_url: "https://api.joingobi.com/api"
+    tags:
+      - tag1
+      - tag2
+      - tag3
+    
+  limitless:
+    enabled: false
+    target_dir: "Ingest/Limitless"
+    poll_interval: 3600
+    start_days_ago: 7
